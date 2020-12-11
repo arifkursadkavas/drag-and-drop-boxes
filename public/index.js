@@ -1,7 +1,8 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const numberOfBoxes = 20;
+  const numberOfBoxes = 5;
+  let boxes = [];
 
   class Node {
     constructor(id, sideLength, color, x, y, area, children, visible) {
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function generateBox(id) {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const sideLength = generateRandomInteger(50, 100);
+    const sideLength = generateRandomInteger(75, 150);
     const color = generateRandomColor();
     const x = generateRandomInteger(0, w - sideLength);
     const y = generateRandomInteger(0, h - sideLength);
@@ -33,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function generateBoxes() {
-    let boxes = [];
     for (var i = 0; i < numberOfBoxes; i++) {
       var box = generateBox(i);
       boxes.push(box);
@@ -43,7 +43,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function applyBoxToHtml(box) {
+    let nodeText = document.createElement("div");
+    nodeText.innerHTML = box.area + " px²";
+    nodeText.style.textAlign = "center";
+    nodeText.style.marginTop = "5px";
+
     let node = document.createElement("div");
+    node.appendChild(nodeText);
+
+    node.className = "boxClass";
+
     node.style.position = "absolute";
     node.style.top = box.y;
     node.style.left = box.x;
@@ -56,20 +65,55 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("boxContainer").appendChild(node);
   }
 
-  function applyBoxesToHtml(boxes) {
+  function applyBoxesToHtml() {
+    removeAllBoxesFromHTML();
     boxes.forEach(function (box) {
       applyBoxToHtml(box);
     });
   }
 
-  //Utility functions
-  function isOverLapping(boxes, x, y, sideLength) {}
-
-  // to generate random position in window
-  function getRandomCoordinate(width, height) {
-    let x = generateRandomInteger(0, width);
-    let y = generateRandomInteger(0, height);
+  /**
+   * This function removes top style attribute and puts bottom : 0px
+   * to bring the boxes to the bottom of the window
+   *
+   * @param {string} n - A string param
+   * @return {string} A good string
+   *
+   * @example
+   *
+   *     foo('hello')
+   */
+  function applyGravity() {
+    let htmlBoxes = document.getElementsByClassName("boxClass");
+    //console.log(htmlBoxes);
+    for (let box of htmlBoxes) {
+      box.style.removeProperty("top");
+      box.style.bottom = 0;
+    }
   }
+
+  function applyShake() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    for (let box of boxes) {
+      box.x = generateRandomInteger(0, w - box.sideLength);
+      box.y = generateRandomInteger(0, h - box.sideLength);
+    }
+
+    applyBoxesToHtml();
+  }
+
+  //Utility functions
+  function removeAllBoxesFromHTML() {
+    let currentBoxes = document.getElementsByClassName("boxClass");
+
+    while (currentBoxes.length > 0) {
+      currentBoxes[0].remove();
+    }
+  }
+
+  function isOverLapping(boxes, x, y, sideLength) {}
 
   //generates a random integer in the min-max range
   function generateRandomInteger(min, max) {
@@ -85,11 +129,21 @@ document.addEventListener("DOMContentLoaded", function () {
     return color;
   }
 
-  const button = document.getElementById("populate");
+  const populateButton = document.getElementById("populate");
 
-  button.addEventListener("click", function () {
+  populateButton.addEventListener("click", function () {
     //console.log("Button clicked");
-    let boxes = generateBoxes();
+    boxes = generateBoxes();
     applyBoxesToHtml(boxes);
+  });
+
+  const dropNodesButton = document.getElementById("dropNodes");
+  dropNodesButton.addEventListener("click", function () {
+    applyGravity();
+  });
+
+  const shakeButton = document.getElementById("shake");
+  shakeButton.addEventListener("click", function () {
+    applyShake();
   });
 });
