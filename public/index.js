@@ -72,8 +72,11 @@ document.addEventListener("DOMContentLoaded", function () {
     node.style.border = "solid 4px white";
     node.style.borderRadius = "9px";
 
-    node.setAttribute("draggable", true);
+    //double click action
+    node.addEventListener("dblclick", handleBoxDoubleClick);
 
+    //dragging properties & listeners
+    node.setAttribute("draggable", true);
     node.addEventListener("dragstart", handleDragStart, false);
     node.addEventListener("dragover", handleDragOver, false);
     node.addEventListener("dragenter", handleDragEnter, false);
@@ -82,6 +85,28 @@ document.addEventListener("DOMContentLoaded", function () {
     node.addEventListener("drop", handleDrop, false);
 
     document.getElementById("boxContainer").appendChild(node);
+  }
+
+  //DOUBLE CLICK
+  function handleBoxDoubleClick(e) {
+    console.log(e);
+    const boxId = e.target.getAttribute("id");
+
+    const clickedNode = findBoxById(+boxId);
+
+    console.log(clickedNode);
+    if (clickedNode.children.length > 0) {
+      console.log("Has children", clickedNode.children.length);
+      clickedNode.children.forEach(function (node) {
+        node.visible = true;
+        node.x =
+          clickedNode.x - generateRandomInteger(0, clickedNode.sideLength / 4);
+        node.y =
+          clickedNode.y - generateRandomInteger(0, clickedNode.sideLength / 4);
+      });
+    }
+    clickedNode.visible = false;
+    applyBoxesToHtml();
   }
 
   //DRAG AND DROP UTILITIES
