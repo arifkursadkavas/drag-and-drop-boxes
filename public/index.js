@@ -214,9 +214,15 @@ document.addEventListener("DOMContentLoaded", function () {
     let htmlBoxes = document.getElementsByClassName("boxClass");
     //console.log(htmlBoxes);
     for (let box of htmlBoxes) {
-      box.style.removeProperty("top");
-      box.style.bottom = 0;
+      //box.style.removeProperty("top");
+      //box.style.bottom = 0;
     }
+
+    for (let node of boxes) {
+      node.y = window.innerHeight - node.sideLength - 10;
+    }
+
+    applyBoxesToHtml();
   }
 
   function applyShake() {
