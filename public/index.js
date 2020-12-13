@@ -104,8 +104,9 @@ document.addEventListener("DOMContentLoaded", function () {
         node.y =
           clickedNode.y - generateRandomInteger(0, clickedNode.sideLength / 4);
       });
+      clickedNode.visible = false;
     }
-    clickedNode.visible = false;
+
     applyBoxesToHtml();
   }
 
