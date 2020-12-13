@@ -279,6 +279,10 @@ document.addEventListener("DOMContentLoaded", function () {
   //Button handlers registered
   const populateButton = document.getElementById("populate");
   populateButton.addEventListener("click", function () {
+    //First clean current state if exists;
+    removeAllBoxesFromHTML();
+    boxes = [];
+
     boxes = generateBoxes();
     applyBoxesToHtml(boxes);
   });
