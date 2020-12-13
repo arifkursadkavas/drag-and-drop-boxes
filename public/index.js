@@ -1,18 +1,15 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const numberOfBoxes = 5;
-  let boxes = [];
+  const numberOfBoxes = 5; // adjustable number of boxes per generation
+  let boxes = []; //Global store for storing boxes' state
 
   let boxContainer = document.getElementById("boxContainer");
-
   boxContainer.addEventListener("dragstart", handleContainerDragStart, false);
-  //boxContainer.addEventListener("dragover", handleDragOver, false);
-  //boxContainer.addEventListener("dragenter", handleDragEnter, false);
-  //boxContainer.addEventListener("dragleave", handleDragLeave, false);
   boxContainer.addEventListener("dragend", handleContainerDragEnd, false);
   boxContainer.addEventListener("drop", handleContainerDrop, false);
 
+  //Structure to hold node metadata
   class Node {
     constructor(id, sideLength, color, x, y, area, children, visible) {
       this.id = id;
@@ -37,9 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const children = [];
     const visible = true;
 
-    const node = new Node(id, sideLength, color, x, y, area, children, visible);
-
-    return node;
+    return new Node(id, sideLength, color, x, y, area, children, visible);
   }
 
   function generateBoxes() {
@@ -47,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
       var box = generateBox(i);
       boxes.push(box);
     }
-    //console.log(boxes);
     return boxes;
   }
 
@@ -89,14 +83,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //DOUBLE CLICK
   function handleBoxDoubleClick(e) {
-    console.log(e);
     const boxId = e.target.getAttribute("id");
 
     const clickedNode = findBoxById(+boxId);
 
-    console.log(clickedNode);
     if (clickedNode.children.length > 0) {
-      console.log("Has children", clickedNode.children.length);
       clickedNode.children.forEach(function (node) {
         node.visible = true;
         node.x =
@@ -112,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //DRAG AND DROP UTILITIES
   function handleDragStart(e) {
-    //console.log("handleDragStart", e, this);
     this.style.opacity = "0.3";
     this.style.borderStyle = "dashed";
 
@@ -120,13 +110,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function handleDragEnd(e) {
-    //console.log("handleDragEnd", e, this);
     this.style.opacity = "1";
     this.style.borderStyle = "solid";
   }
 
   function handleDragOver(e) {
-    //console.log("handleDragOver", e, this);
     if (e.preventDefault) {
       e.preventDefault();
     }
@@ -135,19 +123,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function handleDragEnter(e) {
-    //console.log("handleDragEnter", e, this);
     this.classList.add("over");
   }
 
   function handleDragLeave(e) {
-    //console.log("handleDragLeave", e, this);
     this.classList.remove("over");
   }
 
   function handleDrop(e) {
-    //console.log("handleDrop", e, this);
     e.stopPropagation();
-    //console.log("Drop data", e.dataTransfer.getData("boxId"));
+
     const droppedBoxId = e.dataTransfer.getData("boxId");
     const targetBoxId = this.getAttribute("id");
 
@@ -155,18 +140,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     mergeBoxes(droppedBoxId, targetBoxId);
 
-    if (this.classList.contains("boxClass")) {
-      //console.log("Into the box");
-    } else {
-      //console.log("Out of the box");
-    }
     return false;
   }
 
   function handleContainerDragStart(e) {
-    //console.log("handleContainerDragStart", this, e);
-    //e.dataTransfer.setData("boxId", this.getAttribute("id"));
+    return;
   }
+
   function handleContainerDragEnd(e) {
     if (e.target.className === "boxClass") {
       const boxId = e.target.getAttribute("id");
@@ -179,18 +159,14 @@ document.addEventListener("DOMContentLoaded", function () {
         applyBoxesToHtml();
       }
     }
-    //console.log("Into the Container", e, this);
   }
   function handleContainerDrop(e) {
-    //console.log("handleContainerDrop", e, this);
     e.stopPropagation();
-    //console.log("Drop data", e.dataTransfer.getData("boxId"));
 
     return false;
   }
 
   function applyBoxesToHtml() {
-    console.log(boxes);
     removeAllBoxesFromHTML();
     boxes.forEach(function (box) {
       if (box.visible) {
@@ -211,17 +187,9 @@ document.addEventListener("DOMContentLoaded", function () {
    *     foo('hello')
    */
   function applyGravity() {
-    let htmlBoxes = document.getElementsByClassName("boxClass");
-    //console.log(htmlBoxes);
-    for (let box of htmlBoxes) {
-      //box.style.removeProperty("top");
-      //box.style.bottom = 0;
-    }
-
     for (let node of boxes) {
       node.y = window.innerHeight - node.sideLength - 10;
     }
-
     applyBoxesToHtml();
   }
 
@@ -308,9 +276,8 @@ document.addEventListener("DOMContentLoaded", function () {
     return color;
   }
 
-  const populateButton = document.getElementById("populate");
-
   //Button handlers registered
+  const populateButton = document.getElementById("populate");
   populateButton.addEventListener("click", function () {
     boxes = generateBoxes();
     applyBoxesToHtml(boxes);
